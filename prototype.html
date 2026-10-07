@@ -1,0 +1,231 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><title>AI Transparency + Memory</title>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0d0d0f;--s:#141417;--e:#1b1b1f;--b:#2a2a30;--t:#ececf1;--t2:#a8a8b3;--t3:#7a7a86;--g:#5ee09a;--bl:#7db4ff;--am:#f5c451;color-scheme:dark;font-family:Figtree,system-ui,sans-serif;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*{box-sizing:border-box}html{height:100%}body{height:100%;margin:0;background:var(--bg);color:var(--t);font-size:15px;line-height:1.55}
+button,textarea,input,select{font:inherit;color:inherit}button{cursor:pointer}:focus-visible{outline:2px solid var(--bl);outline-offset:2px}
+h1,h2,p{margin:0}svg{flex:none}
+.app{display:flex;height:100%;overflow:hidden}
+.side{width:264px;background:var(--s);border-right:1px solid var(--b);display:flex;flex-direction:column;padding:16px;gap:8px;z-index:30}
+.brand{display:flex;align-items:center;gap:8px;font-weight:600;padding:8px;margin-bottom:16px}.brand svg{color:var(--bl)}
+.nav{display:flex;align-items:center;gap:12px;height:40px;padding:0 12px;border-radius:10px;background:none;border:0;text-align:left;color:var(--t2);width:100%}
+.nav:hover{background:var(--e)}.nav[aria-current=page]{background:var(--e);color:var(--t)}
+.nav .n{margin-left:auto;font-size:12px;color:var(--t3)}
+.sp{flex:1}.me{display:flex;align-items:center;gap:12px;padding:8px}.me i{width:32px;height:32px;border-radius:50%;background:var(--e);display:grid;place-items:center;font-style:normal;font-weight:600}
+.main{flex:1;min-width:0;display:flex;flex-direction:column;transition:padding .22s}
+.top{height:56px;display:flex;align-items:center;gap:12px;padding:0 24px;border-bottom:1px solid var(--b)}
+.top h1{font-size:15px;font-weight:600}
+.ib{width:32px;height:32px;display:grid;place-items:center;background:none;border:0;border-radius:8px;color:var(--t2)}.ib:hover{background:var(--e);color:var(--t)}.mb{display:none}
+.scroll{flex:1;overflow:auto;padding:32px 24px}
+.thread{max-width:720px;margin:0 auto;display:flex;flex-direction:column;gap:32px}
+.um{align-self:flex-end;max-width:80%;background:var(--e);border-radius:16px;padding:12px 16px}.um time{display:block;font-size:12px;color:var(--t3);margin-top:4px;text-align:right}
+.ai{display:flex;gap:16px}.av{width:32px;height:32px;border-radius:50%;background:var(--e);border:1px solid var(--b);display:grid;place-items:center;color:var(--bl)}
+.ab{flex:1;display:flex;flex-direction:column;gap:16px;min-width:0}.ab p{max-width:68ch}.muted{color:var(--t2)}
+.note{font-size:13px;color:var(--t3)}
+.chips{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.chip{display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 12px;border-radius:16px;border:1px solid var(--b);background:none;font-size:13px;transition:background .15s}.chip:hover{background:var(--e)}
+.chip.g{color:var(--g)}.chip.b{color:var(--bl)}.chip.x{color:var(--t);margin-left:4px;background:var(--e)}
+.comp{padding:0 24px 16px}.cbox{max-width:720px;margin:0 auto;display:flex;gap:8px;align-items:flex-end;background:var(--s);border:1px solid var(--b);border-radius:16px;padding:8px}
+.cbox textarea{flex:1;background:none;border:0;resize:none;padding:8px;outline:0;max-height:120px}.cbox:focus-within{border-color:#44444d}
+.send{width:40px;height:40px;border-radius:50%;border:0;background:var(--t);color:#111;display:grid;place-items:center}
+.fine{text-align:center;font-size:12px;color:var(--t3);margin-top:8px}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:400px;background:var(--s);border-left:1px solid var(--b);display:flex;flex-direction:column;transform:translateX(100%);visibility:hidden;transition:transform .22s,visibility .22s;z-index:20;padding-top:env(safe-area-inset-top,0px)}
+.drawer.on{transform:none;visibility:visible}
+.dh{display:flex;justify-content:space-between;align-items:flex-start;padding:24px 24px 16px}.dh h2{font-size:18px;font-weight:600}.dh p{font-size:13px;color:var(--t2)}
+.db{flex:1;overflow:auto;padding:0 24px 24px}
+.sum{background:var(--e);border-radius:var(--r);padding:16px;margin-bottom:16px;display:flex;flex-direction:column;gap:8px}
+.lv{display:flex;align-items:center;gap:8px;font-weight:600;color:var(--g)}.lv.m{color:var(--am)}
+.sum p{font-size:14px;color:var(--t2)}
+.sec{border-top:1px solid var(--b)}.sh{width:100%;display:flex;align-items:center;gap:8px;height:48px;background:none;border:0;text-align:left;font-weight:500}
+.sh .cnt{margin-left:auto;color:var(--t3);font-size:13px;font-weight:400}.sh svg{color:var(--t3);transition:transform .15s}.sh[aria-expanded=true] svg{transform:rotate(90deg)}
+.sb{padding-bottom:16px;display:flex;flex-direction:column;gap:8px}
+.it{background:var(--e);border-radius:10px;padding:12px 16px;display:flex;flex-direction:column;gap:4px}.it.off{opacity:.6}
+.it b{font-weight:500}.it small,.meta{font-size:13px;color:var(--t2)}.meta{color:var(--t3)}
+.row{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+blockquote{margin:0;border-left:2px solid var(--am);padding:4px 0 4px 16px;color:var(--t)}
+.foot{font-size:12px;color:var(--t3);padding-top:16px}
+.btn{height:40px;padding:0 16px;border-radius:10px;border:1px solid var(--b);background:none;display:inline-flex;align-items:center;gap:8px;transition:background .15s}.btn:hover{background:var(--e)}
+.btn.p{background:var(--t);color:#111;border-color:var(--t)}.btn.p:hover{background:#fff}.btn.sm{height:32px;padding:0 12px;font-size:13px}
+.btn.d{color:#ff9a9a;border-color:#4a2a2e}.btn.d:hover{background:#2a1a1d}
+.sc{display:none}
+.pg{flex:1;overflow:auto;padding:40px 32px}.wrap{max-width:1000px;margin:0 auto}
+.pg h1{font-size:28px;font-weight:600;letter-spacing:-.01em}.pg .sub{color:var(--t2);margin:4px 0 32px}
+.ctl{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin-bottom:24px}
+.in{height:40px;background:var(--s);border:1px solid var(--b);border-radius:10px;padding:0 12px;width:100%}
+.sw{position:relative;flex:1;min-width:200px}.sw svg{position:absolute;left:12px;top:12px;color:var(--t3)}.sw .in{padding-left:40px}
+.tabs{display:flex;gap:4px;background:var(--s);border:1px solid var(--b);border-radius:10px;padding:3px}
+.tab{height:32px;padding:0 12px;border:0;border-radius:8px;background:none;color:var(--t2);font-size:14px}.tab[aria-pressed=true]{background:var(--e);color:var(--t)}
+select.in{width:auto}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px}
+.card{text-align:left;background:var(--s);border:1px solid var(--b);border-radius:var(--r);padding:24px;display:flex;flex-direction:column;gap:8px;transition:border-color .15s,background .15s}
+.card:hover{border-color:#44444d;background:#18181c}
+.card .tp{display:flex;justify-content:space-between;font-size:13px;color:var(--t3)}
+.card h2{font-size:16px;font-weight:600;display:flex;gap:8px;align-items:center}.card h2 svg{color:var(--bl)}
+.card p{color:var(--t2);font-size:14px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:44px}
+.card .bt{display:flex;justify-content:space-between;font-size:13px;color:var(--t3);margin-top:8px}
+.st{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--t2)}.st.ok{color:var(--g)}.dot{width:8px;height:8px;border-radius:50%;background:currentColor}
+.empty{grid-column:1/-1;text-align:center;padding:64px 16px;color:var(--t2);display:flex;flex-direction:column;gap:16px;align-items:center}
+.how{margin-top:32px;font-size:13px;color:var(--t3);border-top:1px solid var(--b);padding-top:16px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.ov{position:fixed;inset:0;background:rgba(0,0,0,.6);display:grid;place-items:center;padding:16px;z-index:50}
+.md{background:var(--s);border:1px solid var(--b);border-radius:16px;width:100%;max-width:480px;padding:24px;display:flex;flex-direction:column;gap:16px;max-height:100%;overflow:auto;animation:in .2s}
+@keyframes in{from{opacity:0;transform:translateY(8px)}}
+.mh{display:flex;justify-content:space-between;gap:16px}.mh h2{font-size:20px;font-weight:600;margin-bottom:4px}
+.md dl{margin:0;display:grid;grid-template-columns:auto 1fr;gap:8px 24px;font-size:14px}.md dt{color:var(--t3)}.md dd{margin:0}
+.acts{display:flex;gap:8px;flex-wrap:wrap;border-top:1px solid var(--b);padding-top:16px}.acts .d{margin-left:auto}
+label{font-size:13px;color:var(--t2);display:block;margin-bottom:4px}textarea.in{height:auto;padding:12px;resize:vertical}
+.toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translate(-50%,16px);background:var(--t);color:#111;padding:12px 16px;border-radius:10px;opacity:0;pointer-events:none;transition:.2s;z-index:60;font-weight:500}.toast.on{opacity:1;transform:translate(-50%,0)}
+.sk{height:16px;border-radius:8px;background:linear-gradient(90deg,var(--e),#25252b,var(--e));background-size:200% 100%;animation:sh 1.2s infinite}@keyframes sh{to{background-position:-200% 0}}
+.ab ul{margin:0;padding-left:20px;max-width:68ch;display:flex;flex-direction:column;gap:8px}
+.sugg{max-width:720px;margin:0 auto 8px;display:flex;flex-wrap:wrap;gap:8px}.sugg .chip{height:auto;min-height:32px;padding:4px 12px;text-align:left;color:var(--t2)}
+.mrow{display:flex;justify-content:space-between;align-items:center;gap:8px;width:100%;background:none;border:0;padding:0;text-align:left}.mrow span{display:flex;flex-direction:column}.mrow svg{color:var(--t3);transition:transform .15s}.mrow[aria-expanded=true] svg{transform:rotate(90deg)}.mdet{display:flex;flex-direction:column;gap:8px;margin-top:8px}
+@media(min-width:1101px){.app.dr .main{padding-right:400px}}
+@media(max-width:1100px){.sc.on{display:block;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:15}}
+@media(max-width:860px){.side{position:fixed;top:0;bottom:0;left:0;transform:translateX(-100%);transition:transform .22s;visibility:hidden}.side.on{transform:none;visibility:visible}.mb{display:grid}.sc.sd{z-index:25}.top{padding:0 16px}.pg{padding:24px 16px}.scroll{padding:24px 16px}}
+@media(max-width:720px){.drawer{top:auto;left:0;width:auto;height:85%;border-left:0;border-top:1px solid var(--b);border-radius:16px 16px 0 0;transform:translateY(100%)}.um{max-width:92%}.ai{gap:12px}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style></head><body>
+<div id="app"></div><div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script>
+const KEY='atm-v2';
+// Data layer: swap this object for Supabase calls later; the UI only uses load()/save().
+const repo={load(){try{return JSON.parse(localStorage.getItem(KEY))}catch(e){return null}},save(s){try{localStorage.setItem(KEY,JSON.stringify(s));return true}catch(e){return false}}};
+const seed=()=>({mem:[
+{id:'m1',title:'UI/UX Designer',desc:'Helps the AI understand your current role so career advice and portfolio feedback fit you.',cat:'Career',status:'active',pinned:true,source:'Added by you',created:'Oct 12, 2025',last:'Today',count:42},
+{id:'m2',title:'Looking for jobs in Bangalore',desc:'Helps the AI suggest local job boards, salary ranges and interview prep for Bangalore.',cat:'Career',status:'active',pinned:false,source:'Conversation',created:'Jan 8, 2026',last:'Today',count:5},
+{id:'m3',title:'Learning React',desc:'Helps the AI give React-specific guidance, examples and learning resources.',cat:'Learning',status:'active',pinned:false,source:'Conversation',created:'May 12, 2026',last:'Yesterday',count:18},
+{id:'m4',title:'Portfolio updated',desc:'Lets the AI reference your latest portfolio when giving feedback and resume summaries.',cat:'Projects',status:'active',pinned:false,source:'Imported',created:'Jun 30, 2026',last:'3 days ago',count:12},
+{id:'m5',title:'Interested in product design',desc:'Helps the AI prioritise product design resources, frameworks and career paths.',cat:'Preferences',status:'active',pinned:true,source:'Added by you',created:'Sep 15, 2025',last:'Last week',count:29},
+{id:'m6',title:'Prefers concise answers',desc:'Keeps answers short and direct, with fewer examples.',cat:'Preferences',status:'paused',pinned:false,source:'Added by you',created:'Jul 10, 2026',last:'2 weeks ago',count:154}],
+turns:[{id:'t0',q:'Should I accept this UI/UX internship in Bangalore?',sc:'A',time:'10:42 AM',excl:[],upd:false,asm:{text:"You're prioritizing long-term product design experience over immediate salary.",status:'pending'}}]});
+let S=repo.load();if(!S||!Array.isArray(S.mem)||!Array.isArray(S.turns))S=seed();
+const U0=()=>({view:'chat',dr:false,open:{},src:{},modal:null,q:'',tab:'all',cat:'All',ea:false,busy:false,side:false,loading:false});const U=U0();U.loading=true;
+const save=()=>{if(!repo.save(S))toast("Couldn't save your changes. They'll be lost if you refresh.")};
+const I={check:'M5 12l5 5 9-10',pin:'M12 17v5M9 3h6l-1 7 3 3H7l3-3z',x:'M6 6l12 12M18 6L6 18',chev:'M9 6l6 6-6 6',search:'M11 4a7 7 0 100 14 7 7 0 000-14zM21 21l-5-5',plus:'M12 5v14M5 12h14',menu:'M4 7h16M4 12h16M4 17h16',send:'M12 19V5M5 12l7-7 7 7',mem:'M12 3a9 9 0 100 18 9 9 0 000-18zM12 8v4l3 2',chat:'M4 5h16v11H9l-5 4z',spark:'M12 3l2 6 6 2-6 2-2 6-2-6-6-2 6-2z',pause:'M9 5v14M15 5v14',archive:'M4 6h16v4H4zM6 10v10h12V10M10 14h4',warn:'M12 4l9 16H3zM12 10v4M12 17v.01'};
+const ic=(n,s=16)=>`<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${I[n]}"/></svg>`;
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const $=s=>document.querySelector(s);
+const find=id=>S.mem.find(m=>m.id===id);
+const T=()=>S.turns.find(t=>t.id===U.turn);
+const NAMES=Object.fromEntries(seed().mem.map(m=>[m.id,m.title]));
+const pl=(n,a,b)=>`${n} ${n===1?a:b}`;
+// Mock AI layer: replace pick()/reply()/SC with an API call later.
+const SC={
+A:{ask:'Should I accept this UI/UX internship in Bangalore?',mem:['m1','m2'],asm:"You're prioritizing long-term product design experience over immediate salary.",sug:"I'm currently prioritizing learning opportunities over salary.",base:'High',
+src:[['Design interns are often offered full-time roles at the company they intern with.','UX Industry Employment Trends 2025','Research report'],["Bangalore has India's deepest product-design hiring market.",'Bangalore Tech Ecosystem Overview','Market analysis'],['Internship experience shortens the time to a first full-time design role.','Career Trajectory Data','Career data']],
+why:{m1:'Used to understand your current career direction.',m2:'Used to judge how relevant this opportunity is.'}},
+B:{ask:'What should I ask the recruiter before accepting?',mem:['m1'],asm:'You want this internship to lead to a full-time role.',sug:"I'm mainly here to learn, not to get a full-time offer.",base:'High',
+src:[['Strong internships define mentorship, scope and conversion up front.','Design Internship Guide','Career guide'],['Many companies share intern conversion rates when asked directly.','Intern Hiring Practices','Industry survey']],
+why:{m1:'Used to focus the questions on design work and critique.'}},
+C:{ask:'What salary should I expect for a UI/UX role?',mem:['m1','m2'],asm:"You're looking at entry-level roles with under a year of experience.",sug:'I have 3 years of experience.',base:'Moderate',
+src:[['Entry-level design pay in Bangalore sits in a fairly narrow band (demo figures).','India Design Salary Report 2026','Salary report'],['Internship stipends vary widely by company size (demo figures).','Bangalore Internship Stipend Index','Market index']],
+why:{m1:'Used to match the range to design roles.',m2:'Used to apply Bangalore pay levels.'}},
+D:{ask:'Should I add this project to my portfolio?',mem:['m4','m5'],asm:null,base:'High',
+src:[['Hiring managers scan portfolios quickly, so fewer, deeper case studies work better.','Portfolio Hiring Practices Survey','Survey']],
+why:{m4:'Used to place this project among your latest work.',m5:'Used to frame it around product thinking.'}}};
+const pick=q=>/recruiter|ask before/i.test(q)?'B':/salary|stipend|ctc|lpa|\bpay/i.test(q)?'C':/portfolio|case study|project/i.test(q)?'D':/internship|accept|offer|bangalore/i.test(q)?'A':'X';
+const turnUsed=t=>t.sc==='X'?[]:SC[t.sc].mem.map(find).filter(m=>m&&m.status==='active'&&!t.excl.includes(m.id));
+function reply(t){if(t.sc==='X')return["I can walk through four things in this demo: the internship decision, recruiter questions, salary expectations and your portfolio. Pick one below."];
+const u=turnUsed(t).map(m=>m.id),a=(t.asm&&t.asm.text)||'',L=/learn/i.test(a),p=[];
+if(t.sc==='A'){p.push(u.length?"I'd lean toward accepting it.":"In general, I'd lean toward accepting it if the role gives you real product work.","Design interns are often offered full-time roles at the company they intern with, and Bangalore has India's deepest product-design hiring market.");
+if(u.includes('m1'))p.push("As a UI/UX designer, shipping real product work will do more for your portfolio than another solo project.");
+if(u.includes('m2'))p.push("Since you're searching in Bangalore, it also puts you in front of the employers you're targeting.");
+p.push(L?"Because you're prioritizing learning over salary, judge this offer on mentorship and the scope of your work more than the stipend.":/long-term/i.test(a)?"Since you're prioritizing long-term product design experience over immediate salary, a modest stipend matters less than the kind of work you'll ship.":`Going by your priority, "${a}", weigh the stipend and the learning opportunity accordingly.`,"Before you accept, ask who will mentor you, what you'll ship, and whether there's a path to a full-time role.")}
+else if(t.sc==='B'){p.push("Here's what I'd ask before saying yes:","- Mentorship: who will review your work, and how often?","- Responsibilities: which product or feature will you own, and will you work with real users?","- Projects: what will you be able to show in your portfolio afterwards?","- Stipend: what is the monthly amount, and when is it paid?","- Full-time conversion: what share of past interns got offers, and when is that decided?");
+if(u.includes('m1'))p.push("As a UI/UX designer, press hardest on how much design critique you'll get, not just which tasks you'll be given.");
+p.push(L?"Since learning matters most to you, spend the most time on the mentorship and projects questions.":/full-time/i.test(a)?"Since you want a path to full-time, ask for the conversion rate and timeline in writing.":`Going by your priority, "${a}", weigh these questions accordingly.`)}
+else if(t.sc==='C'){p.push("For entry-level UI/UX roles in Bangalore, demo figures suggest roughly ₹3-6 LPA, with internships around ₹10,000-25,000 a month. These are static demo numbers, not live data.");
+if(u.includes('m1'))p.push("Product companies tend to pay toward the top of that range for designers with strong portfolios.");
+if(u.includes('m2'))p.push("Bangalore pays above most Indian cities, but living costs are higher too, so compare take-home pay, not just the headline number.");
+p.push(/senior|mid|[2-9]\+?\s*years/i.test(a)?"For your updated experience level, the demo range shifts upward to roughly ₹8-15 LPA.":/entry/i.test(a)?"This range assumes entry-level roles with under a year of experience.":`Using your update, "${a}", treat this range as a starting point and adjust.`,"Check recent offers at your target companies before negotiating.")}
+else{p.push("Yes, add it, as long as it shows your process and not only the final screens.","Include the problem, your role, two or three key decisions and the result.");
+if(u.includes('m4'))p.push("Since your portfolio was updated recently, put this near the top and cut the weakest older piece to keep the set tight.");
+if(u.includes('m5'))p.push("It also fits your interest in product design, so frame it around the user need, the trade-offs and the outcome.");
+p.push("Aim for a short case study with one clear outcome.")}
+return p}
+const md=ps=>{let h='',l=false;ps.forEach(x=>{const li=x.startsWith('- ');if(li&&!l){h+='<ul>';l=true}if(!li&&l){h+='</ul>';l=false}h+=li?`<li>${esc(x.slice(2))}</li>`:`<p>${esc(x)}</p>`});return h+(l?'</ul>':'')};
+function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(toast.h);toast.h=setTimeout(()=>t.classList.remove('on'),2600)}
+function regen(id,msg){U.busy=id;U.bmsg=msg||'Updating with your change…';if(msg)U.stick=1;render();setTimeout(()=>{U.busy=null;if(msg)U.stick=1;render()},700)}
+const sb=m=>m.status==='active'?`<span class="st ok"><i class="dot"></i>Active</span>`:m.status==='paused'?`<span class="st">${ic('pause',12)}Paused</span>`:`<span class="st">${ic('archive',12)}Archived</span>`;
+const sec=(id,t,n,body)=>`<section class="sec" id="sec-${id}"><button class="sh" data-act="sec" data-id="${id}" aria-expanded="${!!U.open[id]}"><span>${t}</span><span class="cnt">${n}</span>${ic('chev')}</button>${U.open[id]?`<div class="sb">${body}</div>`:''}</section>`;
+function changeNote(t){const c=[];if(t.upd)c.push('your edited assumption');SC[t.sc].mem.forEach(id=>{const m=find(id),n=NAMES[id];if(!m)c.push(`"${n}" was deleted`);else if(m.status!=='active')c.push(`"${m.title}" is ${m.status}`);else if(t.excl.includes(id))c.push(`"${m.title}" is off for this answer`)});return c.length?`<p class="note">Updated: ${esc(c.join('; '))}.</p>`:''}
+function aiBody(t){if(U.loading)return'<div class="sk"></div><div class="sk" style="width:80%"></div><div class="sk" style="width:60%"></div>';if(U.busy===t.id)return`<p class="muted" aria-live="polite">${U.bmsg}</p>`;
+if(t.sc==='X')return md(reply(t));const n=turnUsed(t).length;
+return md(reply(t))+changeNote(t)+`<div class="chips"><button class="chip g" data-act="chipv" data-id="${t.id}">${ic('check',14)}Verified</button>${SC[t.sc].mem.length?`<button class="chip b" data-act="chipm" data-id="${t.id}">${ic('mem',14)}Memory used · ${n}</button>`:''}<button class="chip x" data-act="explain" data-id="${t.id}">Explain response</button></div>`}
+function chat(){const sg=Object.keys(SC).filter(k=>!S.turns.some(t=>t.sc===k));
+return`<div class="top"><button class="ib mb" data-act="side" aria-label="Open menu">${ic('menu',20)}</button><h1>UI/UX internship decision</h1></div><div class="scroll" id="scroll"><div class="thread">${S.turns.map(t=>`<div class="um"><p>${esc(t.q)}</p><time>${t.time}</time></div><div class="ai"><div class="av">${ic('spark')}</div><div class="ab">${aiBody(t)}</div></div>`).join('')}</div></div><div class="comp">${sg.length?`<div class="sugg" aria-label="Try asking">${sg.map(k=>`<button class="chip" data-act="ask" data-id="${k}">${esc(SC[k].ask)}</button>`).join('')}</div>`:''}<div class="cbox"><textarea id="cin" rows="1" placeholder="Message the assistant" aria-label="Message"></textarea><button class="send" data-act="send" aria-label="Send">${ic('send')}</button></div><p class="fine">The assistant can make mistakes. Check important info.</p></div>`}
+function drawer(){const t=T();if(!t||t.sc==='X')return'';const s=SC[t.sc],us=turnUsed(t),n=us.length,ns=s.src.length,hi=s.base==='High'&&n===s.mem.length;
+const ver=s.src.map((x,i)=>`<div class="it"><b>${x[0]}</b><button class="btn sm" style="align-self:flex-start;margin-top:4px" data-act="src" data-id="${i}" aria-expanded="${!!U.src[i]}">${U.src[i]?'Hide source':'Show source'}</button>${U.src[i]?`<small>${x[1]} · ${x[2]}<br>Sample source for this prototype.</small>`:''}</div>`).join('');
+const mem=s.mem.map(id=>{const m=find(id);if(!m)return'';const off=t.excl.includes(id),act=m.status==='active',x=U.mx===id;
+return`<div class="it ${off||!act?'off':''}"><button class="mrow" data-act="mx" data-id="${id}" aria-expanded="${x}"><span><b>${esc(m.title)}</b><small>${act&&!off?s.why[id]:off?'Not used for this answer.':'Not used because it is '+m.status+'.'}</small></span>${ic('chev')}</button>${x?`<div class="mdet"><small>${esc(m.desc)}</small><span class="meta">Why it was used: ${s.why[id]}</span><span class="meta">Last used ${m.last} · ${m.status[0].toUpperCase()+m.status.slice(1)} · ${m.source}</span><div class="row">${act&&!off?`<button class="btn sm" data-act="excl" data-id="${id}">Don't use this memory for this answer</button>`:off&&act?`<button class="btn sm" data-act="incl" data-id="${id}">Use again</button>`:''}<button class="btn sm" data-act="manage" data-id="${id}">Manage memory</button></div></div>`:''}</div>`}).join('')||'<p class="muted">No memories shaped this answer.</p>';
+const A=t.asm,lbl=A&&(A.status==='confirmed'?'You confirmed this.':A.status==='edited'?'You edited this.':'');
+const asm=A?`<div class="it"><small>The assistant assumed</small><blockquote>${esc(A.text)}</blockquote>${lbl?`<span class="meta">${lbl}</span>`:''}</div>`+(U.ea?`<label for="atext">Your assumption</label><textarea class="in" id="atext" rows="3" data-af>${esc(A.text)}</textarea><div class="row"><button class="btn sm" data-act="suggest">Try an example</button></div><div class="row"><button class="btn p" data-act="aupdate">Update response</button><button class="btn" data-act="acancel">Cancel</button></div>`:`<div class="row">${A.status==='pending'?`<span class="muted" style="align-self:center">Is this correct?</span><button class="btn sm" data-act="ayes">Yes</button>`:''}<button class="btn sm" data-act="aedit">Edit</button></div>`):'';
+return`<div class="dh"><div><h2>How this answer was made</h2><p>What shaped it, and what you can change.</p></div><button class="ib" data-act="close" aria-label="Close">${ic('x',18)}</button></div><div class="db"><div class="sum"><div class="lv ${hi?'':'m'}">${ic(hi?'check':'warn')}${hi?'High':'Moderate'} confidence</div><p>Based on ${pl(ns,'verified source','verified sources')}, ${pl(n,'memory','memories')} and ${A?'1 assumption':'no assumptions'}.</p><p>The facts are checked. The recommendation is a judgment shaped by your context${A||s.mem.length?', so it changes if you correct '+(A?'the assumption':'a memory')+(A&&s.mem.length?' or turn off a memory':''):''}.</p></div>${sec('ver','Verified',pl(ns,'source','sources'),ver)}${s.mem.length?sec('mem','Memory used',pl(n,'memory','memories'),mem):''}${A?sec('asm','Assumptions','1 assumption',asm):''}<p class="foot">Prototype with sample data. Sources are illustrative.</p></div>`}
+function grid(){if(U.loading)return'<div class="card sk" style="height:152px"></div>'.repeat(3);const q=U.q.toLowerCase(),l=S.mem.filter(m=>(U.tab==='all'||m.status===U.tab)&&(U.cat==='All'||m.cat===U.cat)&&(m.title+m.desc).toLowerCase().includes(q)).sort((a,b)=>b.pinned-a.pinned);
+return l.length?l.map(m=>`<button class="card" data-act="detail" data-id="${m.id}"><div class="tp"><span>${m.cat}</span>${sb(m)}</div><h2>${esc(m.title)}${m.pinned?`<span aria-label="Pinned">${ic('pin',14)}</span>`:''}</h2><p>${esc(m.desc)}</p><div class="bt"><span>Last used ${m.last}</span></div></button>`).join(''):`<div class="empty"><p>${S.mem.length?'No memories match your search.':"You haven't saved any memories yet."}</p><button class="btn" data-act="add">${ic('plus')}Add a memory</button></div>`}
+function memory(){const C=['All','Career','Learning','Projects','Preferences'];
+return`<div class="pg"><div class="wrap"><h1>Memory</h1><p class="sub">What the assistant remembers about you. You decide what it uses.</p><div class="ctl"><div class="sw">${ic('search')}<input class="in" id="q" type="search" placeholder="Search memories" aria-label="Search memories" value="${esc(U.q)}"></div><div class="tabs">${['all','active','paused','archived'].map(t=>`<button class="tab" data-act="tab" data-id="${t}" aria-pressed="${U.tab===t}">${t[0].toUpperCase()+t.slice(1)}</button>`).join('')}</div><select class="in" id="cat" aria-label="Category">${C.map(c=>`<option ${U.cat===c?'selected':''}>${c}</option>`).join('')}</select><button class="btn p" data-act="add">${ic('plus')}Add memory</button></div><div class="grid" id="grid">${grid()}</div><div class="how"><span>Paused, archived and deleted memories never shape answers. Deleting can't be undone.</span></div></div></div>`}
+function modal(){const M=U.modal;if(!M)return'';const m=M.id&&find(M.id);let h='';
+if(M.t==='detail'&&m)h=`<div class="mh"><div><h2>${esc(m.title)}</h2>${sb(m)}</div><button class="ib" data-act="mclose" aria-label="Close" data-af>${ic('x',18)}</button></div><p class="muted">${esc(m.desc)}</p><dl><dt>Category</dt><dd>${m.cat}</dd><dt>Source</dt><dd>${m.source}</dd><dt>Created</dt><dd>${m.created}</dd><dt>Last referenced</dt><dd>${m.last}</dd><dt>Used in</dt><dd>${m.count} responses</dd></dl><div class="acts"><button class="btn p" data-act="edit" data-id="${m.id}">Edit</button>${m.status==='active'?`<button class="btn" data-act="pause" data-id="${m.id}">Pause</button>`:m.status==='paused'?`<button class="btn" data-act="resume" data-id="${m.id}">Resume</button>`:`<button class="btn" data-act="restore" data-id="${m.id}">Restore</button>`}<button class="btn" data-act="pin" data-id="${m.id}">${m.pinned?'Unpin':'Pin'}</button>${m.status!=='archived'?`<button class="btn" data-act="archive" data-id="${m.id}">Archive</button>`:''}<button class="btn d" data-act="del" data-id="${m.id}">Delete</button></div>`;
+else if(M.t==='edit'||M.t==='add'){const v=m||{title:'',desc:'',cat:'Career'};h=`<div class="mh"><h2>${m?'Edit memory':'Add memory'}</h2></div><div><label for="ft">Title</label><input class="in" id="ft" value="${esc(v.title)}" data-af></div><div><label for="fd">What should the assistant know?</label><textarea class="in" id="fd" rows="3">${esc(v.desc)}</textarea></div><div><label for="fc">Category</label><select class="in" id="fc" style="width:100%">${['Career','Learning','Projects','Preferences'].map(c=>`<option ${v.cat===c?'selected':''}>${c}</option>`).join('')}</select></div><div class="acts" style="border:0;padding:0"><button class="btn p" data-act="save" data-id="${m?m.id:''}">Save changes</button><button class="btn" data-act="mcancel" data-id="${m?m.id:''}">Cancel</button></div>`}
+else if(M.t==='delete'&&m)h=`<div class="mh"><h2>Delete this memory?</h2></div><p class="muted">"${esc(m.title)}" will stop shaping any answers. This can't be undone.</p><div class="acts" style="border:0;padding:0"><button class="btn d" data-act="confirmdel" data-id="${m.id}">Delete memory</button><button class="btn" data-act="mcancel" data-id="${m.id}" data-af>Cancel</button></div>`;
+return`<div class="ov"><div class="md" role="dialog" aria-modal="true" aria-label="Memory">${h}</div></div>`}
+function render(){if(U.dr&&!T())U.dr=false;const cin=$('#cin'),cv=cin?cin.value:'',pm=U.pm,ae=document.activeElement,fk=ae&&ae.dataset&&ae.dataset.act?[ae.dataset.act,ae.dataset.id]:null;
+const c=U.view==='chat';
+$('#app').innerHTML=`<div class="app ${U.dr?'dr':''}"><aside class="side ${U.side?'on':''}" aria-label="Sidebar"><div class="brand">${ic('spark',20)}Assistant</div><button class="nav" data-act="nav" data-id="chat" ${c?'aria-current="page"':''}>${ic('chat',18)}UI/UX internship decision</button><button class="nav" data-act="nav" data-id="memory" ${!c?'aria-current="page"':''}>${ic('mem',18)}Memory<span class="n">${S.mem.filter(m=>m.status==='active').length} active</span></button><div class="sp"></div><button class="nav" style="height:32px;font-size:13px;color:var(--t3)" data-act="reset">Reset demo</button><div class="me"><i>A</i><div>Abby</div></div></aside><main class="main">${c?chat():memory()}</main></div><div class="sc ${U.side?'on sd':(U.dr&&c&&innerWidth<=1100?'on':'')}" data-act="${U.side?'side':'close'}"></div><aside class="drawer ${U.dr&&c?'on':''}" role="complementary" aria-label="Explain response">${c?drawer():''}</aside>${modal()}`;
+if(c){const n=$('#cin');n.value=cv;const s=$('#scroll');if(s&&U.stick)s.scrollTop=s.scrollHeight;U.stick=0}
+if(U.modal){const f=$('.md [data-af]');f&&f.focus()}
+else if(U.dr&&c&&!U.pdr){const f=$('.drawer .ib');f&&f.focus()}
+else if(pm&&U.ret){const f=document.querySelector(`[data-act="${U.ret[0]}"]`+(U.ret[1]?`[data-id="${U.ret[1]}"]`:''));f&&f.focus()}
+else if(fk){const f=document.querySelector(`[data-act="${fk[0]}"]`+(fk[1]?`[data-id="${fk[1]}"]`:''));f&&f.focus()}
+if(U.focus){const f=document.getElementById('sec-'+U.focus);f&&f.scrollIntoView({block:'nearest'});U.focus=null}
+U.pdr=U.dr;U.pm=!!U.modal}
+function mut(id,fn,msg){const m=find(id);if(!m)return;fn(m);save();U.modal={t:'detail',id};toast(msg);render()}
+document.addEventListener('click',e=>{
+const ov=e.target.classList.contains('ov');if(ov){U.modal=null;return render()}
+const el=e.target.closest('[data-act]');if(!el)return;const a=el.dataset.act,id=el.dataset.id,m=id&&find(id);if(a==='detail'||a==='add')U.ret=[a,id];
+switch(a){
+case'nav':U.view=id;U.side=false;U.dr=false;break;
+case'side':U.side=!U.side;break;
+case'explain':U.turn=id;U.dr=true;U.open={};U.mx=null;break;
+case'chipv':U.turn=id;U.dr=true;U.open={ver:1};U.focus='ver';break;
+case'chipm':U.turn=id;U.dr=true;U.open={mem:1};U.mx=null;U.focus='mem';break;
+case'close':U.dr=false;break;
+case'sec':U.open[id]=!U.open[id];break;
+case'src':U.src[id]=!U.src[id];break;
+case'mx':U.mx=U.mx===id?null:id;break;
+case'manage':U.view='memory';U.dr=false;U.modal={t:'detail',id};break;
+case'excl':{const t=T();t.excl.push(id);save();toast(`Won't use "${m.title}" for this answer`);return regen(t.id)}
+case'incl':{const t=T();t.excl=t.excl.filter(x=>x!==id);save();toast(`Using "${m.title}" again`);return regen(t.id)}
+case'ayes':T().asm.status='confirmed';save();toast('Assumption confirmed');break;
+case'aedit':U.ea=true;U.open.asm=1;break;
+case'acancel':U.ea=false;break;
+case'suggest':$('#atext').value=SC[T().sc].sug;return;
+case'aupdate':{const t=T(),v=$('#atext').value.trim();if(!v)return toast('Write your assumption first');t.asm={text:v,status:'edited'};t.upd=true;U.ea=false;save();toast('Response updated using your correction.');return regen(t.id)}
+case'detail':U.modal={t:'detail',id};break;
+case'mclose':U.modal=null;break;
+case'mcancel':U.modal=id?{t:'detail',id}:null;break;
+case'edit':U.modal={t:'edit',id};break;
+case'add':U.modal={t:'add'};break;
+case'del':U.modal={t:'delete',id};break;
+case'save':{const t=$('#ft').value.trim();if(!t)return toast('Add a title first');const d=$('#fd').value.trim()||'No description yet.',c=$('#fc').value;
+if(id){Object.assign(m,{title:t,desc:d,cat:c});toast('Memory saved');U.modal={t:'detail',id}}
+else{S.mem.push({id:'m'+Date.now(),title:t,desc:d,cat:c,status:'active',pinned:false,source:'Added by you',created:new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}),last:'Never',count:0});U.modal=null;toast('Memory added')}
+save();break}
+case'confirmdel':S.mem=S.mem.filter(x=>x.id!==id);S.turns.forEach(t=>t.excl=t.excl.filter(x=>x!==id));save();U.modal=null;toast('Memory deleted');returnrender();
+case'pause':return mut(id,m=>m.status='paused','Memory paused');
+case'resume':return mut(id,m=>m.status='active','Memory resumed');
+case'restore':return mut(id,m=>m.status='active','Memory restored');
+case'archive':return mut(id,m=>m.status='archived','Memory archived');
+case'pin':return mut(id,m=>m.pinned=!m.pinned,m.pinned?'Memory unpinned':'Memory pinned');
+case'tab':U.tab=id;break;
+case'reset':S=seed();Object.assign(U,U0());save();toast('Demo reset');break;
+case'send':case'ask':{let q;if(a==='ask')q=SC[id].ask;else{const i=$('#cin');q=i.value.trim();i.value=''}if(!q)return;const tn={id:'t'+Date.now(),q,sc:pick(q),time:new Date().toLocaleTimeString([],{hour:'numeric',minute:'2-digit'}),excl:[],upd:false};tn.asm=tn.sc!=='X'&&SC[tn.sc].asm?{text:SC[tn.sc].asm,status:'pending'}:null;S.turns.push(tn);save();return regen(tn.id,'Thinking…')}
+}render()});
+document.addEventListener('input',e=>{if(e.target.id==='q'){U.q=e.target.value;$('#grid').innerHTML=grid()}});
+document.addEventListener('change',e=>{if(e.target.id==='cat'){U.cat=e.target.value;$('#grid').innerHTML=grid()}});
+document.addEventListener('keydown',e=>{
+if(e.key==='Escape'){if(U.modal)U.modal=null;else if(U.dr)U.dr=false;else if(U.side)U.side=false;else return;render()}
+if(e.key==='Enter'&&!e.shiftKey&&e.target.id==='cin'){e.preventDefault();document.querySelector('[data-act=send]').click()}});
+addEventListener('resize',()=>{clearTimeout(U.rt);U.rt=setTimeout(render,150)});
+render();setTimeout(()=>{U.loading=false;render()},450);
+</script></body></html>

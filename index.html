@@ -1,0 +1,185 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><title>AI Transparency + Memory · Case study</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<script>document.documentElement.classList.add('js')</script>
+<style>
+:root{--bg:#0a0a0b;--t:#ece8e1;--m:#8d8a83;--l:#24242a;--a:#6ea8ff;--s:#111114;--e:#1a1a1e;--g:#5ee09a;color-scheme:dark;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);font-family:'Inter Tight',system-ui,sans-serif}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--t);font-size:18px;line-height:1.55;overflow-x:hidden}
+h1,h2,h3,p{margin:0}button{font:inherit;color:inherit;cursor:pointer}a{color:inherit}:focus-visible{outline:2px solid var(--a);outline-offset:3px}
+.mono,.lab{font-family:'JetBrains Mono',ui-monospace,monospace;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--m)}
+#bar{position:fixed;top:env(safe-area-inset-top,0px);left:0;height:2px;background:var(--a);width:0;z-index:50}
+#pos{position:fixed;left:24px;bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:40;background:rgba(10,10,11,.8);backdrop-filter:blur(6px);padding:4px 8px;border:1px solid var(--l);border-radius:4px}
+.sec{border-top:1px solid var(--l);padding:112px 24px;min-height:70vh;display:flex;flex-direction:column;justify-content:center}
+.in-w{max-width:1040px;margin:0 auto;width:100%}
+.lab{margin-bottom:32px;display:block}
+h1{font-size:clamp(40px,11vw,128px);line-height:.95;letter-spacing:-.04em;font-weight:500}
+h2{font-size:clamp(28px,6vw,72px);line-height:1;letter-spacing:-.03em;font-weight:500;max-width:18ch}
+.lead{font-size:clamp(18px,2vw,24px);color:var(--m);max-width:44ch;margin-top:24px}.lead b{color:var(--t);font-weight:400}
+.tags{display:flex;flex-wrap:wrap;gap:8px;margin:32px 0}.tags span{border:1px solid var(--l);padding:4px 12px;border-radius:99px}
+.cta{display:inline-flex;align-items:center;gap:12px;height:56px;padding:0 32px;border-radius:99px;background:var(--t);color:#0a0a0b;text-decoration:none;font-weight:500;transition:background .2s,transform .2s}.cta:hover{background:#fff;transform:translateY(-1px)}.cta.big{height:72px;font-size:22px;padding:0 48px}
+.r{opacity:1}.js .r{opacity:0;transform:translateY(16px);transition:opacity .7s,transform .7s}.js .r.in{opacity:1;transform:none}
+.d1{transition-delay:.12s!important}.d2{transition-delay:.24s!important}.d3{transition-delay:.36s!important}.d4{transition-delay:.48s!important}
+/* mini product UI */
+.ui{background:#0d0d0f;border:1px solid var(--l);border-radius:12px;overflow:hidden;font-size:15px;line-height:1.5;color:#ececf1}
+.ui .bar{display:flex;gap:6px;padding:12px 16px;border-bottom:1px solid #2a2a30}.ui .bar i{width:8px;height:8px;border-radius:50%;background:#2a2a30}
+.ui .pad{padding:24px;display:flex;flex-direction:column;gap:16px}.ui small,.ui .mu{color:#a8a8b3;font-size:13px}
+.um{align-self:flex-end;background:#1b1b1f;border-radius:16px;padding:8px 16px;max-width:85%}
+.ch{display:inline-flex;align-items:center;gap:6px;height:28px;padding:0 12px;border-radius:14px;border:1px solid #2a2a30;font-size:13px}.ch.g{color:#5ee09a}.ch.b{color:#7db4ff}.ch.x{background:#1b1b1f}.ch.am{color:#f5c451}
+.chs{display:flex;flex-wrap:wrap;gap:8px}
+.it{background:#1b1b1f;border-radius:10px;padding:12px 16px;display:flex;flex-direction:column;gap:2px}
+.hr{display:flex;justify-content:space-between;border-top:1px solid #2a2a30;padding:12px 0}.hr span:last-child{color:#a8a8b3;font-size:13px}
+.tabs{display:flex;gap:4px;margin-bottom:16px;flex-wrap:wrap}.tabs button{background:none;border:1px solid var(--l);border-radius:99px;height:36px;padding:0 16px;color:var(--m);transition:.2s}.tabs button[aria-selected=true]{color:var(--t);border-color:var(--t)}
+[hidden]{display:none!important}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:start}
+/* 02 */
+.rows .it{opacity:0;transform:translateX(-12px);transition:.5s}.rows.in .it{opacity:1;transform:none}.rows.in .it:nth-child(2){transition-delay:.2s}.rows.in .it:nth-child(3){transition-delay:.4s}
+/* 03 */
+.trio{display:grid;grid-template-columns:repeat(3,1fr);gap:32px;margin-top:64px;position:relative}.trio:before{content:"";position:absolute;top:6px;left:0;height:1px;background:var(--a);width:0;transition:width 1.2s .2s}.trio.in:before{width:100%}
+.trio div{padding-top:32px;position:relative}.trio div:before{content:"";position:absolute;top:0;left:0;width:13px;height:13px;border-radius:50%;background:var(--bg);border:1px solid var(--a)}
+.trio h3{font-size:28px;font-weight:500;letter-spacing:-.02em;margin:8px 0}.trio p{color:var(--m)}
+/* 04 */
+.sw{display:flex;align-items:center;gap:16px;margin:32px 0}.sw button{background:none;border:0;padding:8px 0}.sw input{accent-color:var(--a);width:96px}
+.dx{overflow:hidden;transition:max-height .5s,opacity .4s;max-height:0;opacity:0}.demo[data-lv="1"] .dx{max-height:340px;opacity:1}
+.demo .x{transition:opacity .3s}.demo[data-lv="0"] .xo{opacity:.35}
+/* 06 07 */
+q{quotes:none;display:block;border-left:2px solid var(--a);padding-left:16px;margin:8px 0}
+.btn{height:36px;padding:0 16px;border-radius:10px;border:1px solid #2a2a30;background:none;transition:.2s}.btn:hover{background:#1b1b1f}.btn.p{background:#ececf1;color:#111;border-color:#ececf1}
+.in2{width:100%;background:#141417;border:1px solid #2a2a30;border-radius:10px;color:inherit;font:inherit;padding:8px 12px}
+.flash{animation:fl 1.2s}@keyframes fl{from{background:rgba(110,168,255,.18)}}
+.cmp{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:32px;border-top:1px solid var(--l);padding-top:24px}.cmp p{color:var(--m);font-size:16px}.cmp b{color:var(--t);font-weight:500;display:block}
+/* 08 */
+.dec{display:grid;grid-template-columns:1fr 1.2fr;gap:24px;padding:40px 0;border-top:1px solid var(--l);align-items:baseline}.dec h3{font-size:clamp(24px,3vw,40px);font-weight:500;letter-spacing:-.02em;line-height:1.1}.dec p{color:var(--m)}
+.flow{display:flex;flex-wrap:wrap;gap:16px;align-items:center;margin:48px 0}.flow span{color:var(--m);transition:color .5s}.flow.in span{color:var(--t)}
+.flow span:nth-child(2){transition-delay:.3s}.flow span:nth-child(3){transition-delay:.6s}.flow span:nth-child(4){transition-delay:.9s}.flow span:nth-child(5){transition-delay:1.2s}
+.nodes{display:flex;gap:0;margin:48px 0;flex-wrap:wrap}.nodes div{flex:1;min-width:200px;border:1px solid var(--l);padding:24px;margin-left:-1px}.nodes h3{font-size:22px;font-weight:500}.nodes p{color:var(--m);font-size:16px}
+details{border-top:1px solid var(--l)}details:last-child{border-bottom:1px solid var(--l)}summary{display:flex;justify-content:space-between;padding:20px 0;cursor:pointer;list-style:none;font-size:22px}summary::-webkit-details-marker{display:none}summary span{color:var(--m);font-size:16px}details p{color:var(--m);padding-bottom:20px;max-width:56ch}
+footer{border-top:1px solid var(--l);padding:48px 24px 96px}
+@media(max-width:800px){body{font-size:17px}.sec{padding:80px 20px}.g2,.cmp{grid-template-columns:1fr;gap:32px}.trio{grid-template-columns:1fr}.trio:before{display:none}.dec{grid-template-columns:1fr;gap:8px}#pos{left:12px}}
+html,body{max-width:100%}.in-w,.g2>*{min-width:0}h1,h2,h3,p,summary{overflow-wrap:anywhere}
+#pos{max-width:calc(100vw - 24px);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.hr{gap:16px}.hr span:last-child{text-align:right}
+@media(max-width:800px){.sec{min-height:0;padding:72px 20px}.cta,.cta.big{width:100%;justify-content:center;padding:0 24px;height:60px;font-size:18px}.ui .pad{padding:16px}summary{flex-direction:column;gap:4px;font-size:20px}.dec{padding:28px 0}.tabs button,.btn{min-height:44px}.tags{margin:24px 0}.nodes div{min-width:100%}.hr{flex-direction:column;gap:2px}.hr span:last-child{text-align:left}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important;animation:none!important}.js .r{opacity:1;transform:none}}
+</style></head><body>
+<div id="bar"></div><div id="pos" class="mono" aria-hidden="true">Intro</div>
+<main>
+<section class="sec" data-t="Intro"><div class="in-w">
+
+<h1 class="r">Why did the AI say that?</h1>
+<p class="lead r d1"><b>I designed a way for people to understand what influenced an AI response and change it when the context is wrong.</b></p>
+<div class="tags mono r d2"><span>Product Design</span><span>UI/UX</span><span>Interaction Design</span><span>AI Transparency</span><span>Memory Control</span></div>
+<p class="r d2" style="margin-bottom:48px"><a class="cta" href="prototype.html" data-link="proto">Explore the prototype <span aria-hidden="true">→</span></a></p>
+<div class="r d3" data-tabs>
+<div class="tabs" role="tablist" aria-label="Prototype states"><button role="tab" aria-selected="true" aria-controls="p1">Conversation</button><button role="tab" aria-selected="false" aria-controls="p2">Explain response</button><button role="tab" aria-selected="false" aria-controls="p3">Memory Manager</button></div>
+<div class="ui"><div class="bar"><i></i><i></i><i></i></div>
+<div class="pad" id="p1" role="tabpanel"><div class="um">Should I accept this UI/UX internship in Bangalore?</div><p>I'd lean toward accepting it. Design interns are often offered full-time roles at the company they intern with, and Bangalore has India's deepest product-design hiring market.</p><div class="chs"><span class="ch g">✓ Verified</span><span class="ch b">◉ Memory used · 2</span><span class="ch x">Explain response</span></div></div>
+<div class="pad" id="p2" role="tabpanel" hidden><b style="color:#5ee09a">✓ High confidence</b><p class="mu">Based on 3 verified sources, 2 memories and 1 assumption.</p><div><div class="hr"><span>Verified</span><span>3 sources</span></div><div class="hr"><span>Memory used</span><span>2 memories</span></div><div class="hr"><span>Assumptions</span><span>1 assumption</span></div></div></div>
+<div class="pad" id="p3" role="tabpanel" hidden><b>Memory</b><div class="it"><span>UI/UX Designer</span><small>Active · pinned · last used today</small></div><div class="it"><span>Looking for jobs in Bangalore</span><small>Active · last used today</small></div><div class="it" style="opacity:.6"><span>Prefers concise answers</span><small>Paused</small></div></div>
+</div></div>
+<p class="mono r" style="margin-top:16px">Sample data. Selected states from the working prototype.</p>
+</div></section>
+
+<section class="sec" data-t="The black box"><div class="in-w g2">
+<div><h2 class="r">The answer is simple. The context isn't.</h2><p class="lead r d1">AI recommendations can combine verified information, personal context and assumptions. But users often see only the final answer.</p></div>
+<div class="ui r d2"><div class="pad"><p style="font-size:24px">I'd lean toward accepting it.</p><div class="rows r"><div class="it"><span>3 verified sources</span></div><div class="it" style="margin-top:8px"><span>2 memories</span></div><div class="it" style="margin-top:8px"><span>1 assumption</span></div></div></div></div>
+</div></section>
+
+<section class="sec" data-t="Design question"><div class="in-w">
+
+<h2 class="r" style="max-width:24ch">How might we make AI responses transparent and controllable without making everyday AI interactions overwhelming?</h2>
+<div class="trio r d1"><div><span class="lab">Understand</span><h3>What influenced the answer?</h3></div><div><span class="lab">Inspect</span><h3>Why was that context used?</h3></div><div><span class="lab">Control</span><h3>What can I change?</h3></div></div>
+</div></section>
+
+<section class="sec" data-t="Principle"><div class="in-w g2">
+<div><h2 class="r">Transparency should be available, not unavoidable.</h2><p class="lead r d1">I used progressive disclosure so the normal conversation stays lightweight while deeper context is available when the user needs it.</p></div>
+<div class="r d2"><div class="sw mono"><button id="l0" type="button">Simple</button><input id="rg" type="range" min="0" max="1" step="1" value="0" aria-label="Detail level, simple to transparent"><button id="l1" type="button">Transparent</button></div>
+<div class="ui demo" data-lv="0" id="demo"><div class="pad"><p>I'd lean toward accepting it. Design interns are often offered full-time roles at the company they intern with.</p>
+<div class="dx"><div class="hr"><span>Verified</span><span>3 sources checked</span></div><div class="hr"><span>Memory used</span><span>UI/UX Designer, Bangalore job search</span></div><div class="hr"><span>Assumption</span><span>Long-term experience over salary</span></div><div class="hr"><span>Confidence</span><span>High</span></div><div class="hr"><span>Sources</span><span>Employment trends, Bangalore overview, career data</span></div></div></div></div></div>
+</div></section>
+
+<section class="sec" data-t="Transparency layer"><div class="in-w">
+<h2 class="r">Three kinds of context behind one answer.</h2>
+<div class="r d1" data-tabs style="margin-top:48px"><div class="tabs" role="tablist" aria-label="Context types"><button role="tab" aria-selected="true" aria-controls="c1">Verified</button><button role="tab" aria-selected="false" aria-controls="c2">Memory</button><button role="tab" aria-selected="false" aria-controls="c3">Assumption</button></div>
+<div class="g2" style="gap:32px">
+<div><div id="c1" role="tabpanel"><h3 class="lead" style="color:var(--t);margin:0">Which information supports this answer?</h3><p class="lead" style="font-size:18px">Checked facts, each one tied to a source you can open.</p></div><div id="c2" role="tabpanel" hidden><h3 class="lead" style="color:var(--t);margin:0">What personal context influenced this answer?</h3><p class="lead" style="font-size:18px">Memories, shown with the reason each one was used.</p></div><div id="c3" role="tabpanel" hidden><h3 class="lead" style="color:var(--t);margin:0">What did the AI infer?</h3><p class="lead" style="font-size:18px">Guesses about you, marked as guesses.</p></div></div>
+<div class="ui" aria-live="polite"><div class="pad" id="c1b"><div class="it"><span>Design interns are often offered full-time roles.</span><small>Employment trends · Research report</small></div><div class="it"><span>Bangalore has a deep product-design hiring market.</span><small>Tech overview · Market analysis</small></div></div>
+<div class="pad" id="c2b" hidden><div class="it"><span>UI/UX Designer</span><small>Used to understand your current career direction.</small></div><div class="it"><span>Looking for jobs in Bangalore</span><small>Used to judge how relevant this opportunity is.</small></div></div>
+<div class="pad" id="c3b" hidden><small>The assistant assumed</small><q>You're prioritizing long-term product design experience over immediate salary.</q><div class="chs"><span class="ch am">Is this correct?</span><span class="ch x">Yes</span><span class="ch x">Edit</span></div></div></div>
+</div></div>
+<p class="lead r" style="max-width:56ch">These are not three separate features. They are three different types of context behind an AI response.</p>
+</div></section>
+
+<section class="sec" data-t="When the AI is wrong"><div class="in-w g2">
+<div><h2 class="r">What happens when the AI is wrong about you?</h2><p class="lead r d1">Explainability becomes more useful when users can act on what they discover. Instead of simply showing why an answer happened, the system lets users correct the context behind it.</p></div>
+<div class="ui r d2"><div class="pad"><small>The assistant assumed</small><q id="aq">You prioritize long term product experience over immediate salary.</q>
+<div id="ac"><span class="mu">Is this correct?</span> <button class="btn" id="yes">Yes</button> <button class="btn" id="ed">Edit</button></div>
+<div id="ef" hidden><label for="ai" class="mu">Your assumption</label><input class="in2" id="ai" value="I'm currently prioritizing learning opportunities over salary."><div style="margin-top:8px;display:flex;gap:8px"><button class="btn p" id="up">Update response</button><button class="btn" id="cn">Cancel</button></div></div>
+<div id="ar" style="border-top:1px solid #2a2a30;padding-top:16px"><small id="an" hidden>Updated using your correction.</small><p id="at">Since you prioritize long term product experience over immediate salary, a modest stipend matters less than the kind of work you'll ship.</p></div></div></div>
+</div></section>
+
+<section class="sec" data-t="Memory"><div class="in-w">
+<h2 class="r">What does AI remember about me?</h2>
+<p class="lead r d1">It gives users visibility into what the assistant retains and control over how that context is used.</p>
+<div class="g2 r d2" style="margin-top:48px">
+<div class="ui"><div class="pad" style="gap:8px"><div class="it"><span>UI/UX Designer</span><small>Active · pinned</small></div><div class="it"><span>Interested in product design</span><small>Active · pinned</small></div><div class="it" id="bm"><span>Looking for jobs in Bangalore</span><small>Active</small><div style="margin-top:8px"><button class="btn" id="ex">Don't use this memory for this answer</button></div></div><div class="it"><span>Learning React</span><small>Active</small></div><div class="it"><span>Portfolio updated</span><small>Active</small></div></div></div>
+<div class="ui"><div class="pad"><small>This answer</small><p>I'd lean toward accepting it.</p><p id="bl">Since you're searching in Bangalore, it also puts you in front of the employers you're targeting.</p><small id="bn" hidden>Excluded from this answer only. The memory is still active.</small></div></div></div>
+<div class="cmp r"><p><b>Delete</b>Removes the memory everywhere. It can't be undone.</p><p><b>Don't use for this answer</b>Leaves the memory alone and skips it for one specific decision.</p></div>
+<p class="lead r" style="max-width:56ch">That difference is an important UX decision. Most people don't want to forget something forever. They just don't want it in this answer.</p>
+</div></section>
+
+<section class="sec" data-t="Decisions"><div class="in-w">
+<h2 class="r" style="margin-bottom:48px">Five decisions shaped the experience</h2>
+
+<div class="dec r"><h3>Progressive disclosure</h3><p>Keep the conversation simple. Reveal deeper context only when requested.</p></div>
+<div class="dec r"><h3>Contextual explanation</h3><p>Explain the specific answer rather than forcing users into generic AI settings.</p></div>
+<div class="dec r"><h3>Actionable transparency</h3><p>Let users change the context instead of only reading about it.</p></div>
+<div class="dec r"><h3>Different types of context</h3><p>Verified information, memory, assumption and AI interpretation should not look identical.</p></div>
+<div class="dec r"><h3>User agency</h3><p>Give users control at both the individual response level and the long term memory level.</p></div>
+</div></section>
+
+<section class="sec" data-t="Prototype"><div class="in-w">
+<h2 class="r">From Figma to functional prototype</h2>
+<div class="nodes r d1"><div><span class="lab">Start</span><h3>Figma concept</h3><p>Three screens: a conversation, an explanation drawer and a memory manager.</p></div><div><span class="lab">Then</span><h3>Interaction model</h3><p>What opens, what hides, what the user can change.</p></div><div><span class="lab">Now</span><h3>Functional prototype</h3><p>Something you can click, break and reset.</p></div></div>
+<p class="lead r" style="max-width:60ch">I wanted to test whether the transparency model worked as an interaction rather than only as a visual concept. The prototype uses controlled demo scenarios to simulate dynamic AI responses, memory states, assumptions and transparency metadata. It is a functional concept prototype, not a production AI system.</p>
+<p class="r" style="margin-top:48px"><a class="cta big" href="prototype.html" data-link="proto">Try the working prototype <span aria-hidden="true">→</span></a></p>
+</div></section>
+
+<section class="sec" data-t="What works"><div class="in-w">
+<h2 class="r" style="margin-bottom:48px">What is actually functional</h2>
+
+<div class="r"><details><summary>Conversation <span>Multiple demo scenarios</span></summary><p>Four controlled scenarios: internship decision, recruiter questions, salary and portfolio. Each has its own sources, memories and assumptions.</p></details>
+<details><summary>Transparency <span>Contextual explanation drawer</span></summary><p>Verified, Memory used and Explain response each open the same drawer on the relevant section.</p></details>
+<details><summary>Memory <span>Inspect, edit, pause, archive, delete</span></summary><p>Search, filter, add and pin too. Deleting asks for confirmation.</p></details>
+<details><summary>Response control <span>Exclude a memory from one answer</span></summary><p>The answer regenerates and a note says what changed.</p></details>
+<details><summary>Assumptions <span>Edit and update the response</span></summary><p>Confirm it or change it. The recommendation rewrites using your correction.</p></details>
+<details><summary>Persistence <span>Demo state persists</span></summary><p>Saved in the browser with localStorage. Reset demo restores the original state.</p></details></div>
+</div></section>
+
+<section class="sec" data-t="Takeaway"><div class="in-w">
+
+<p class="lead r" style="margin:0">The goal isn't to make AI explain everything.</p>
+<h2 class="r d1" style="max-width:16ch;margin-top:16px">It's to give people enough understanding to stay in control.</h2>
+<div class="flow mono r d2"><span>Ask</span><span>→</span><span>Understand</span><span>→</span><span>Inspect</span><span>→</span><span>Control</span><span>→</span><span>Update</span></div>
+</div></section>
+</main>
+<footer><div class="in-w"><p>AI Transparency + Memory</p><p class="mono" style="margin-top:8px">Product Design exploration by Abby</p></div></footer>
+<script>
+const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.15});
+$$('.r').forEach(x=>io.observe(x));
+$$('[data-tabs]').forEach(g=>{const b=$$('[role=tab]',g);b.forEach(x=>x.onclick=()=>{b.forEach(y=>y.setAttribute('aria-selected',y===x));const id=x.getAttribute('aria-controls');$$('[role=tabpanel],[id$=b]',g).forEach(q=>{q.hidden=!(q.id===id||q.id===id+'b')})})});
+const ON_CLAUDE=/claude|anthropic/i.test(location.hostname)||/^(about|blob|data):/.test(location.protocol);
+// Deploy: files sit side by side (index.html = case study, prototype.html). Inside Claude, links use the artifact URLs.
+const LINKS={case:['index.html','https://claude.ai/artifact/BgRpWVVU65RnsKjvMFwSnY'],proto:['prototype.html','https://claude.ai/artifact/NfBthrCurfjV9rwequjFnD']};
+function fixLinks(){document.querySelectorAll('[data-link]').forEach(a=>{a.href=LINKS[a.dataset.link][ON_CLAUDE?1:0];if(ON_CLAUDE){a.target='_blank';a.rel='noopener'}else a.removeAttribute('target')})}
+fixLinks();
+const secs=$$('.sec'),pos=$('#pos'),bar=$('#bar');let tk=0;
+function upd(){tk=0;const h=document.documentElement,p=scrollY/(h.scrollHeight-innerHeight);bar.style.width=Math.min(100,p*100)+'%';let c=0;secs.forEach((s,i)=>{if(s.getBoundingClientRect().top<innerHeight*.5)c=i});pos.textContent=secs[c].dataset.t}
+addEventListener('scroll',()=>{if(!tk)tk=requestAnimationFrame(upd)},{passive:true});upd();
+const demo=$('#demo'),rg=$('#rg'),setLv=v=>{demo.dataset.lv=v;rg.value=v};
+rg.oninput=()=>setLv(rg.value);$('#l0').onclick=()=>setLv(0);$('#l1').onclick=()=>setLv(1);
+const at=$('#at'),flash=()=>{const r=$('#ar');r.classList.remove('flash');void r.offsetWidth;r.classList.add('flash')};
+$('#yes').onclick=()=>{$('#ac').innerHTML='<span class="mu">You confirmed this assumption.</span>'};
+$('#ed').onclick=()=>{$('#ac').hidden=true;$('#ef').hidden=false;$('#ai').focus()};
+$('#cn').onclick=()=>{$('#ef').hidden=true;$('#ac').hidden=false};
+$('#up').onclick=()=>{const v=$('#ai').value.trim();if(!v)return;$('#aq').textContent=v;at.textContent=/learn/i.test(v)?"Because you're prioritizing learning over salary, judge this offer on mentorship and the scope of your work more than the stipend.":'Going by your priority, "'+v+'", weigh the stipend and the learning opportunity accordingly.';$('#an').hidden=false;$('#ef').hidden=true;$('#ac').hidden=false;$('#ac').innerHTML='<span class="mu">Assumption edited.</span> <button class="btn" id="ed2">Edit again</button>';$('#ed2').onclick=$('#ed').onclick;flash()};
+let off=false;$('#ex').onclick=function(){off=!off;this.textContent=off?'Use again':"Don't use this memory for this answer";$('#bl').hidden=off;$('#bn').hidden=!off;$('#bm').style.opacity=off?.7:1}
+</script></body></html>
